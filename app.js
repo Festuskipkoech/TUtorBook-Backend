@@ -6,7 +6,7 @@ const socketIo = require("socket.io");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 require("dotenv").config();
-
+const wss = require('./wss')
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -45,6 +45,11 @@ app.use((err, req, res, next) => {
 // Create HTTP server and setup Socket.IO
 const server = http.createServer(app);
 const io = socketIo(server);
+const HTTP_PORT= 4000;
+const WEB_SOCKET_PORT=8090;
+
+wss.init(WEB_SOCKET_PORT)
+
 
 // Socket.IO connection
 io.on("connection", (socket) => {
@@ -69,4 +74,7 @@ app.get("/health", (req, res) => {
 // Start server
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+});
+app.listen(HTTP_PORT, () => {
+  console.log("Server is listening to port", HTTP_PORT);
 });
