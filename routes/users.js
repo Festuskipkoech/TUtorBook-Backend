@@ -1,13 +1,14 @@
-const express = require("express");
-const User = require("../models/User"); // Ensure User model is imported
-const router = express.Router();
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const multer = require("multer");
-const path = require("path");
+import express from "express";
+import User from "../models/User.js"; // Ensure User model is imported
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import multer from "multer";
+import path from "path";
+import { JWT } from "../config.js";
 
 // Load JWT_SECRET from environment variables
-const JWT_SECRET = process.env.JWT_SECRET || "qwerthjfds56";
+const JWT_SECRET = JWT;
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads/"); // Adjust the destination as needed
@@ -21,7 +22,9 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 50 * 1024 * 1024 }, // Set limit to 50 MB
 });
-// upload.single("photo"),
+
+const router = express.Router();
+
 // Register new user with profile image upload
 router.post("/register", async (req, res) => {
   console.log("Trying to register");
@@ -105,14 +108,14 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ error: "Invalid credentials!" });
     }
 
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: "24h" });
     // Return the token in the response
 
     res.json({
       message: "Login successful",
       token, // JWT token sent to the frontend
       user: {
-        id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
         year: user.year,
@@ -128,6 +131,7 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 // Get all users
 router.get("/getUsers", async (req, res) => {
   try {
@@ -144,7 +148,6 @@ router.get("/getUsers", async (req, res) => {
 });
 
 // Update user profile
-
 router.post("/updateProfile/:userId", upload.single("photo"), async (req, res) => {
   try {
     const { userId } = req.params;
@@ -196,5 +199,4 @@ router.post("/updateProfile/:userId", upload.single("photo"), async (req, res) =
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
-module.exports = router;
+export default router;

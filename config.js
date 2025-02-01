@@ -1,1 +1,1 @@
-require('dotenv').config();
+export const JWT = "1hfdksnvdcksmacnbjlk/.7*vg";

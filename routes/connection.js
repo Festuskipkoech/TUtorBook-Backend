@@ -223,4 +223,4 @@ router.get("/check-connection/:requesterId/:targetId", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

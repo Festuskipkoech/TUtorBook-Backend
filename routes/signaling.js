@@ -7,4 +7,4 @@ router.post('/offer', signalingController.handleOffer)
 router.post('/offer', signalingController.handleAnswer)
 router.post('/offer', signalingController.handleIceCandidate)
 
-module.exports =router;
+export default router;
